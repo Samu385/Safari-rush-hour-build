@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "527739559309",
+    "firebase_url": "https://safari-rush-hour-default-rtdb.firebaseio.com",
+    "project_id": "safari-rush-hour",
+    "storage_bucket": "safari-rush-hour.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527739559309:android:9116265624d4c52244f1c4",
+        "android_client_info": {
+          "package_name": "com.IDVRV.TombScramble"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu8Jx2JIhl6_nw-drQ8DZ8_wYT0_UwONY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
