@@ -1,113 +1,194 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Safari Rush Hour</title>
     <style>
-      body {
-        text-align: center;
-        padding: 0;
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #f3f3f3, #dcdcdc);
-      }
-      .header {
-        padding: 20px;
-        background: #333;
-        color: white;
-        font-size: 24px;
-        font-weight: bold;
-      }
-      .description {
-        margin: 10px;
-        font-size: 16px;
-        color: #444;
-      }
-      .loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #333;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        z-index: 9999;
-        transition: opacity 1s ease-in-out;
-      }
-      .unity-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        opacity: 0;
-        transform: scale(0.8);
-        transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-        margin-top: var(--unity-margin-top, 40px); /* Ajusta la posición vertical de Unity */
-      }
-      .unity-wrapper {
-        width: var(--unity-width, 60vw); /* Ajusta el tamaño de la instancia de Unity */
-        max-width: 1400px;
-        aspect-ratio: 16 / 9;
-        border: 2px solid #333;
-        border-radius: 10px;
-        overflow: hidden;
-      }
-      canvas {
-        width: 100%;
-        height: 100%;
-      }
+        body {
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 0;
+            width: 100%;
+            position: relative;
+        }
+        .title {
+            font-size: 36px;
+            margin: 0;
+        }
+        .description {
+            font-size: 18px;
+            margin-top: 5px;
+        }
+        .unity-container {
+            position: relative;
+            width: 70vw;
+            aspect-ratio: 16 / 9;
+            margin: 30px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #000;
+        }
+        .loading {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+            z-index: 10; /* Asegura que esté sobre los cuadrados */
+        }
+
+        .celebration.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .celebration-text {
+            font-size: 24px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9); /* Fondo blanco para las letras */
+            color: black;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .square {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: red;
+            opacity: 0.8;
+            animation: explode 1s ease-out forwards;
+        }
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
     </style>
-  </head>
-  <body>
-    <div class="loading-screen" id="loadingScreen">Cargando...</div>
-    <div class="header">Safari Rush Hour</div>
-    <div class="description">Memoria de título de Samuel Quiroz<br>Contacto: squiroz21@alumnos.utalca.cl</div>
-    <div class="unity-container" id="unityContainer">
-      <div class="unity-wrapper" id="unityWrapper">
-        <canvas id="unity-canvas" width=900 height=600 tabindex="-1"></canvas>
-      </div>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">Safari Rush Hour</h1>
+        <p class="description">Memoria de título de Samuel Quiroz, Contacto: squiroz21@alumnos.utalca.cl</p>
     </div>
-    
+    <div class="unity-container">
+        <div class="loading" id="loading">Cargando...</div>
+        <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+    <div class="celebration" id="celebration">
+        <div class="celebration-text" id="celebration-text"></div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-text" id="celebration-text"></div>
+        <div id="celebration-container"></div> <!-- Agrega este elemento -->
+    </div>
+
     <script src="Build/Safari-rush-hour-build.loader.js"></script>
     <script>
-      var unityInstance = null;
-      
-      function closeWebPage() {
-        if (unityInstance) {
-          unityInstance.SendMessage("UnityWebBridge", "OnAppClosed");
-        }
-        setTimeout(() => window.close(), 500);
-      }
-      
-      function showUnity() {
-        document.getElementById("loadingScreen").style.opacity = "0";
-        setTimeout(() => {
-          document.getElementById("loadingScreen").style.display = "none";
-          document.getElementById("unityContainer").style.opacity = "1";
-          document.getElementById("unityContainer").style.transform = "scale(1)";
-        }, 1000);
-      }
-      
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        arguments: [],
-        dataUrl: "Build/Safari-rush-hour-build.data",
-        frameworkUrl: "Build/Safari-rush-hour-build.framework.js",
-        codeUrl: "Build/Safari-rush-hour-build.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Escuela de Ingeniería en Desarrollo de Videojuegos y Realidad Virtual de la Universidad de Talca",
-        productName: "TombScramble",
-        productVersion: "0.1",
-      }).then(instance => {
-        unityInstance = instance;
-        showUnity();
-      });
+        var unityInstance = null;
+        
+        createUnityInstance(document.querySelector("#unity-canvas"), {
+            dataUrl: "Build/Safari-rush-hour-build.data",
+            frameworkUrl: "Build/Safari-rush-hour-build.framework.js",
+            codeUrl: "Build/Safari-rush-hour-build.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "Escuela de Ingeniería en Desarrollo de Videojuegos y Realidad Virtual de la Universidad de Talca",
+            productName: "TombScramble",
+            productVersion: "0.1",
+        }).then(instance => {
+            unityInstance = instance;
+            document.getElementById("loading").style.display = "none";
+        });
+        
     </script>
-  </body>
+
+  <script>
+    // Definición global de las funciones
+    function closeWebPage() {
+        window.close();
+    }
+
+    function startCelebration(count, message) {
+        const celebration = document.getElementById("celebration");
+        const text = document.getElementById("celebration-text");
+
+        text.innerText = message;
+        celebration.classList.add("active");
+
+        setTimeout(() => {
+            celebration.classList.remove("active");
+        }, 3000); // Ocultar después de 3 segundos
+
+        const container = document.getElementById("celebration-container");
+        container.innerHTML = '';
+
+        for (let i = 0; i < count; i++) {
+            let square = document.createElement("div");
+            square.className = "square";
+            square.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            square.style.left = "50%";
+            square.style.top = "50%";
+            container.appendChild(square);
+            animateSquare(square);
+        }
+    }
+
+    function animateSquare(square) {
+        let angle = Math.random() * 2 * Math.PI;
+        let distance = Math.random() * 200 + 50;
+        let x = Math.cos(angle) * distance;
+        let y = Math.sin(angle) * distance;
+
+        square.animate([
+            { opacity: 1, transform: "scale(1) translate(0, 0)" },
+            { opacity: 0, transform: `scale(1) translate(${x}px, ${y}px)` }
+        ], {
+            duration: 1500 + Math.random() * 1000,
+            easing: "ease-out",
+            fill: "forwards"
+        });
+    }
+  </script>
+</body>
 </html>
