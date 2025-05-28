@@ -114,6 +114,7 @@
     <div class="header">
         <h1 class="title">Safari Rush Hour</h1>
         <p class="description">Memoria de título de Samuel Quiroz, Contacto: squiroz21@alumnos.utalca.cl</p>
+        <p class="forms">Encuesta después de jugar: https://forms.gle/CzR1c22MtnD86Xfs9</p>
         <p class="level-status" id="level-status"></p>
     </div>
     <div class="unity-container">
@@ -155,36 +156,36 @@
     }
 
     var levelsCompleted = 0;
-    var totalLevels = 40; 
+    // var totalLevels = 40; 
     var levelsToPlay = 10; 
-    var wereInitialLevelsCompleted = false;
+    // var wereInitialLevelsCompleted = false;
 
-    function initialize(newTotalLevels, levels)
+    function initialize(levels)
     {
-        totalLevels = newTotalLevels;
+        // totalLevels = newTotalLevels;
         levelsToPlay = levels;
         updateLevelStatus();
     }
     
     function updateLevelStatus() {
         var statusElement = document.getElementById("level-status");
-        if (wereInitialLevelsCompleted) {
-            statusElement.textContent = `${levelsCompleted} / ${totalLevels} niveles para completar TODOS los niveles`;
-        } else {
+        // if (wereInitialLevelsCompleted) {
+        //     statusElement.textContent = `${levelsCompleted} / ${totalLevels} niveles para completar TODOS los niveles`;
+        // } else {
             statusElement.textContent = `${levelsCompleted} / ${levelsToPlay} niveles para completar la prueba`;
-        }
+        // }
     }
 
     function incrementLevel() {
         levelsCompleted++;
-        if(levelsCompleted > levelsToPlay)
-        {
-            wereInitialLevelsCompleted = true;
-        }
-        else
-        {
-            wereInitialLevelsCompleted = false;
-        }
+        // if(levelsCompleted > levelsToPlay)
+        // {
+        //     wereInitialLevelsCompleted = true;
+        // }
+        // else
+        // {
+        //     wereInitialLevelsCompleted = false;
+        // }
         updateLevelStatus();
     }
 
